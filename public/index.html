@@ -77,12 +77,13 @@
     background:rgba(12,13,16,.85); backdrop-filter:blur(8px);
     border-bottom:1px solid var(--line);
   }
-  .nav{ display:flex; align-items:center; justify-content:space-between; height:64px; }
+  .nav{ display:flex; align-items:center; justify-content:space-between; height:78px; }
   .brand{ display:flex; align-items:center; gap:12px; font-weight:800; font-style:italic; font-size:1.15rem; letter-spacing:-.5px; }
   .bolt{ width:26px; height:26px; flex:none; }
   .bolt path{ fill:var(--steel); }
-  .logo-badge{ height:42px; width:42px; flex:none; object-fit:contain; background:#fff; border-radius:9px; padding:4px; }
-  .logo-foot{ width:180px; max-width:62vw; background:#fff; border-radius:12px; padding:14px 16px; display:block; }
+  .logo-wide{ height:50px; width:auto; max-width:72vw; flex:none; display:block; }
+  .logo-foot{ width:230px; max-width:62vw; display:block; }
+  @media(max-width:680px){ .logo-wide{ height:42px; } }
   .nav .tag{ color:var(--steel-dim); font-style:normal; font-weight:600; font-size:.7rem; letter-spacing:3px; }
   .nav-links{ display:flex; gap:26px; }
   .nav-links a{ color:var(--steel); font-weight:600; font-size:.92rem; }
@@ -103,8 +104,9 @@
   .hero{
     position:relative; overflow:hidden;
     background:
-      radial-gradient(900px 400px at 80% -10%, rgba(225,6,0,.22), transparent 60%),
-      linear-gradient(180deg, var(--bg-2), var(--bg));
+      linear-gradient(180deg, rgba(12,13,16,.72), rgba(12,13,16,.88)),
+      radial-gradient(900px 400px at 80% -10%, rgba(225,6,0,.28), transparent 60%),
+      url('/images/hero.jpg') center center / cover no-repeat;
     border-bottom:1px solid var(--line);
   }
   .hero-inner{ padding:88px 0 76px; max-width:760px; }
@@ -209,9 +211,7 @@
 <header class="site">
   <div class="wrap nav">
     <div class="brand">
-      <img class="logo-badge" src="/images/logo.jpg" alt="PacWest Powersports logo" />
-      <span>PacWest Powersports</span>
-      <span class="tag">RACE · PROVEN · PODIUM</span>
+      <img class="logo-wide" src="/images/logo-wide.png" alt="PacWest Powersports" />
     </div>
     <nav class="nav-links">
       <a href="#services">Services</a>
@@ -432,7 +432,7 @@
   <div class="wrap">
     <div class="foot-grid">
       <div>
-        <img class="logo-foot" src="/images/logo.jpg" alt="PacWest Powersports logo" />
+        <img class="logo-foot" src="/images/logo-wide.png" alt="PacWest Powersports logo" />
         <p class="tag" style="color:var(--steel-dim); letter-spacing:3px; font-size:.72rem; margin-top:14px">RACE · PROVEN · PODIUM</p>
       </div>
       <div>
