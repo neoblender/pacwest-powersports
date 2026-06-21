@@ -1,0 +1,15 @@
+{
+  "name": "pacwest-powersports",
+  "version": "1.0.0",
+  "description": "PacWest Powersports - landing page and repair/upgrade intake estimate flow",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

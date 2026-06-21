@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PacWest Powersports — Race · Proven · Podium</title>
+<meta name="description" content="PacWest Powersports — expert motorcycle repairs and performance upgrades. Get a fast ballpark estimate and reserve your spot." />
+
+<!-- =========================================================
+     CONFIG — edit these as your shop details / pricing change
+     ========================================================= -->
+<script>
+  /* Paste your Formspree form ID here to receive intake submissions by email.
+     Get one free at https://formspree.io  (looks like "xmyzabcd").
+     If left blank, the form still calculates an estimate on-screen and
+     falls back to opening a pre-filled email. */
+  window.PACWEST_CONFIG = {
+    FORMSPREE_ID: "",                 // e.g. "xmyzabcd"
+    SHOP_EMAIL: "service@pacwestpowersports.com",  // placeholder
+    SHOP_PHONE: "(555) 555-0199",                  // placeholder
+    SHOP_ADDRESS: "123 Track Ave, Bend, OR 97701", // placeholder
+    SHOP_HOURS: "Tue–Sat, 9am–6pm"                 // placeholder
+  };
+
+  /* Placeholder pricing — edit freely. All values in USD.
+     Estimate = base + sum(selected repair items) + upgrade adder,
+     with a racer multiplier. Completion days drive the est. date. */
+  window.PACWEST_PRICING = {
+    repairBase: 75,            // shop diagnostic / bench base
+    repairItems: {
+      motor:        { label: "Motor (powerplant)",                 price: 450, days: 5 },
+      transmission: { label: "Transmission (clutch, gears)",       price: 380, days: 4 },
+      controls:     { label: "Hand controls (throttle/brake/clutch/kill)", price: 120, days: 1 },
+      wheels:       { label: "Wheel(s)",                           price: 160, days: 2 },
+      tires:        { label: "Tire(s)",                            price: 110, days: 1 },
+      frame:        { label: "Frame",                              price: 600, days: 7 }
+    },
+    upgradeBase: 90,
+    upgradeOrderPartAdder: 60, // extra if PacWest sources the part
+    upgradeAdviceAdder: 40,    // extra for consult/spec work
+    racerMultiplier: 1.15,     // racers = priority/precision tuning
+    minDays: 2                 // never quote sooner than this many days out
+  };
+</script>
+
+<style>
+  :root{
+    --bg:        #0c0d10;
+    --bg-2:      #141619;
+    --panel:     #181b20;
+    --panel-2:   #1f2329;
+    --steel:     #aeb4bd;
+    --steel-dim: #7a818b;
+    --line:      #2a2f37;
+    --text:      #eef1f5;
+    --accent:    #ff5a1f;   /* race orange */
+    --accent-2:  #ff8a3d;
+    --good:      #36c46b;
+    --radius:    14px;
+    --maxw:      1080px;
+    --font: "Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+  }
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:var(--font); line-height:1.55; -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{ line-height:1.1; margin:0 0 .4em; }
+  a{ color:var(--accent-2); text-decoration:none; }
+  .wrap{ max-width:var(--maxw); margin:0 auto; padding:0 22px; }
+  .italic-head{ font-style:italic; font-weight:800; letter-spacing:-.5px; }
+
+  /* ---------- Header ---------- */
+  header.site{
+    position:sticky; top:0; z-index:50;
+    background:rgba(12,13,16,.85); backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{ display:flex; align-items:center; justify-content:space-between; height:64px; }
+  .brand{ display:flex; align-items:center; gap:12px; font-weight:800; font-style:italic; font-size:1.15rem; letter-spacing:-.5px; }
+  .bolt{ width:26px; height:26px; flex:none; }
+  .bolt path{ fill:var(--steel); }
+  .nav .tag{ color:var(--steel-dim); font-style:normal; font-weight:600; font-size:.7rem; letter-spacing:3px; }
+  .nav-links{ display:flex; gap:26px; }
+  .nav-links a{ color:var(--steel); font-weight:600; font-size:.92rem; }
+  .nav-links a:hover{ color:var(--text); }
+  @media(max-width:680px){ .nav-links{ display:none; } }
+
+  .btn{
+    display:inline-block; cursor:pointer; border:none; font-family:inherit;
+    background:var(--accent); color:#0c0d10; font-weight:800; font-style:italic;
+    padding:14px 26px; border-radius:10px; font-size:1rem; letter-spacing:.3px;
+    transition:transform .08s ease, background .2s ease;
+  }
+  .btn:hover{ background:var(--accent-2); transform:translateY(-1px); }
+  .btn.ghost{ background:transparent; color:var(--text); border:1px solid var(--line); }
+  .btn.ghost:hover{ border-color:var(--accent); color:var(--accent-2); background:transparent; }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    position:relative; overflow:hidden;
+    background:
+      radial-gradient(900px 400px at 80% -10%, rgba(255,90,31,.18), transparent 60%),
+      linear-gradient(180deg, var(--bg-2), var(--bg));
+    border-bottom:1px solid var(--line);
+  }
+  .hero-inner{ padding:88px 0 76px; max-width:760px; }
+  .eyebrow{ color:var(--steel-dim); font-weight:700; letter-spacing:6px; font-size:.72rem; text-transform:uppercase; }
+  .hero h1{ font-size:clamp(2.4rem,6vw,4.2rem); font-style:italic; font-weight:800; letter-spacing:-1px; margin-top:14px; }
+  .hero h1 .hl{ color:var(--accent); }
+  .hero p.lead{ color:var(--steel); font-size:1.15rem; max-width:560px; margin:18px 0 30px; }
+  .hero .cta-row{ display:flex; gap:14px; flex-wrap:wrap; }
+  .badges{ display:flex; gap:26px; margin-top:44px; flex-wrap:wrap; }
+  .badges div{ display:flex; flex-direction:column; }
+  .badges b{ font-size:1.6rem; font-style:italic; color:var(--text); }
+  .badges span{ color:var(--steel-dim); font-size:.8rem; letter-spacing:1px; text-transform:uppercase; }
+
+  /* ---------- Sections ---------- */
+  section{ padding:72px 0; border-bottom:1px solid var(--line); }
+  .sec-head{ margin-bottom:36px; }
+  .sec-head .eyebrow{ display:block; margin-bottom:8px; }
+  .sec-head h2{ font-size:clamp(1.7rem,3.5vw,2.4rem); }
+  .sec-head p{ color:var(--steel); max-width:620px; }
+
+  .cards{ display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:18px; }
+  .card{ background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:26px; }
+  .card h3{ font-style:italic; font-size:1.25rem; }
+  .card p{ color:var(--steel); margin:0; font-size:.96rem; }
+  .card .ic{ width:40px; height:40px; border-radius:9px; background:var(--panel-2); display:flex; align-items:center; justify-content:center; margin-bottom:16px; color:var(--accent); font-weight:900; font-style:italic; }
+
+  /* ---------- Form ---------- */
+  .formwrap{ background:linear-gradient(180deg,var(--bg-2),var(--bg)); }
+  .form-card{ background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:30px; }
+  @media(min-width:860px){ .form-grid{ display:grid; grid-template-columns:1fr 320px; gap:26px; align-items:start; } }
+  .field{ margin-bottom:20px; }
+  .field > label.lbl{ display:block; font-weight:700; margin-bottom:8px; font-size:.95rem; }
+  .hint{ color:var(--steel-dim); font-size:.82rem; font-weight:400; }
+  input[type=text], input[type=email], input[type=tel], input[type=number], select, textarea{
+    width:100%; background:var(--panel-2); border:1px solid var(--line); color:var(--text);
+    border-radius:9px; padding:12px 13px; font-family:inherit; font-size:.97rem;
+  }
+  input:focus, select:focus, textarea:focus{ outline:none; border-color:var(--accent); }
+  textarea{ resize:vertical; min-height:84px; }
+
+  .seg{ display:flex; gap:10px; flex-wrap:wrap; }
+  .seg label{ flex:1; min-width:130px; }
+  .seg input{ position:absolute; opacity:0; pointer-events:none; }
+  .seg span{
+    display:block; text-align:center; padding:14px; border-radius:10px; cursor:pointer;
+    background:var(--panel-2); border:1px solid var(--line); font-weight:700; font-style:italic;
+  }
+  .seg input:checked + span{ border-color:var(--accent); color:var(--accent); box-shadow:inset 0 0 0 1px var(--accent); }
+
+  .checks{ display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px; }
+  .chk{ display:flex; align-items:center; gap:10px; background:var(--panel-2); border:1px solid var(--line); border-radius:9px; padding:11px 13px; cursor:pointer; }
+  .chk input{ width:18px; height:18px; accent-color:var(--accent); flex:none; }
+  .chk.terms{ align-items:flex-start; }
+  .chk small{ color:var(--steel-dim); display:block; }
+
+  .two{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  @media(max-width:520px){ .two{ grid-template-columns:1fr; } }
+
+  .hidden{ display:none !important; }
+  fieldset{ border:1px solid var(--line); border-radius:12px; padding:18px; margin:0 0 20px; }
+  legend{ padding:0 8px; font-style:italic; font-weight:800; color:var(--steel); }
+
+  /* Estimate panel (sticky on desktop) */
+  .estimate{ background:var(--panel-2); border:1px solid var(--line); border-radius:16px; padding:24px; }
+  @media(min-width:860px){ .estimate{ position:sticky; top:84px; } }
+  .estimate .label{ color:var(--steel-dim); text-transform:uppercase; letter-spacing:2px; font-size:.72rem; }
+  .estimate .price{ font-size:2.6rem; font-style:italic; font-weight:800; color:var(--accent); margin:4px 0 2px; }
+  .estimate .range{ color:var(--steel); font-size:.9rem; }
+  .estimate hr{ border:none; border-top:1px solid var(--line); margin:18px 0; }
+  .estimate .row{ display:flex; justify-content:space-between; font-size:.9rem; margin-bottom:8px; color:var(--steel); }
+  .estimate .row b{ color:var(--text); font-weight:700; }
+  .estimate .note{ color:var(--steel-dim); font-size:.78rem; margin-top:14px; }
+
+  .terms-box{ max-height:150px; overflow:auto; background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:14px 16px; color:var(--steel); font-size:.86rem; margin-bottom:14px; }
+  .terms-box h4{ color:var(--text); margin:14px 0 4px; font-size:.92rem; }
+  .terms-box h4:first-child{ margin-top:0; }
+
+  .msg{ border-radius:10px; padding:14px 16px; margin-top:16px; font-weight:600; }
+  .msg.ok{ background:rgba(54,196,107,.12); border:1px solid var(--good); color:#bff5d2; }
+  .msg.err{ background:rgba(255,90,31,.12); border:1px solid var(--accent); color:#ffd2c0; }
+
+  footer.site{ padding:54px 0 70px; background:var(--bg); }
+  .foot-grid{ display:flex; justify-content:space-between; gap:30px; flex-wrap:wrap; }
+  footer .brand{ margin-bottom:10px; }
+  footer p{ color:var(--steel-dim); margin:2px 0; font-size:.92rem; }
+  .legal{ color:#565c66; font-size:.8rem; margin-top:30px; }
+  .req{ color:var(--accent); }
+</style>
+</head>
+<body>
+
+<!-- reusable bolt logo svg -->
+<svg width="0" height="0" style="position:absolute"><symbol id="bolt" viewBox="0 0 24 24"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></symbol></svg>
+
+<header class="site">
+  <div class="wrap nav">
+    <div class="brand">
+      <svg class="bolt"><use href="#bolt"/></svg>
+      <span>PacWest Powersports</span>
+      <span class="tag">RACE · PROVEN · PODIUM</span>
+    </div>
+    <nav class="nav-links">
+      <a href="#services">Services</a>
+      <a href="#why">Why PacWest</a>
+      <a href="#estimate">Get an Estimate</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hero" style="border-bottom:1px solid var(--line)">
+  <div class="wrap hero-inner">
+    <span class="eyebrow">Motorcycle repair &amp; performance</span>
+    <h1>Built to <span class="hl">race.</span><br/>Tuned to <span class="hl">win.</span></h1>
+    <p class="lead">Expert repairs and performance upgrades for race and recreational riders. Get a fast ballpark estimate and reserve your spot in the queue.</p>
+    <div class="cta-row">
+      <a class="btn" href="#estimate">Get an Estimate</a>
+      <a class="btn ghost" href="#services">See Services</a>
+    </div>
+    <div class="badges">
+      <div><b>Race-proven</b><span>Track-tested builds</span></div>
+      <div><b>Fast turnaround</b><span>Clear completion dates</span></div>
+      <div><b>Honest pricing</b><span>Estimate up front</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SERVICES ============ -->
+<section id="services">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">What we do</span>
+      <h2 class="italic-head">Repairs &amp; Upgrades</h2>
+      <p>From a seized motor to a podium-chasing build, we handle the full machine. Pick your service in the estimator below.</p>
+    </div>
+    <div class="cards">
+      <div class="card"><div class="ic">R</div><h3>Repairs</h3><p>Motor, transmission, hand controls, wheels, tires, and frame work — diagnosed and fixed right the first time.</p></div>
+      <div class="card"><div class="ic">U</div><h3>Upgrades</h3><p>Performance parts and tuning. Bring your own part or have us source it — and get advice on what actually makes you faster.</p></div>
+      <div class="card"><div class="ic">P</div><h3>Race Prep</h3><p>Priority precision tuning for racers. We sweat the details that win races and finish on the podium.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WHY ============ -->
+<section id="why">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Why PacWest</span>
+      <h2 class="italic-head">No surprises. Just results.</h2>
+      <p>You get a ballpark estimate and an estimated completion date before any work starts, plus status updates from intake to pickup.</p>
+    </div>
+    <div class="cards">
+      <div class="card"><h3>Up-front estimate</h3><p>Know the ballpark before you commit. Reserve your spot and we lock in your slot.</p></div>
+      <div class="card"><h3>Status you can track</h3><p>Notified at every stage — received, estimate, started, paused, resumed, ready for pickup.</p></div>
+      <div class="card"><h3>Your parts, your call</h3><p>Keep your old parts or let us dispose of them. Clean it yourself or let us handle it.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ESTIMATE / INTAKE ============ -->
+<section id="estimate" class="formwrap">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Reserve your spot</span>
+      <h2 class="italic-head">Get an Estimate</h2>
+      <p>Tell us about the job. Your ballpark estimate and an estimated completion date update as you go. Submitting reserves your spot — we'll confirm within the hour.</p>
+    </div>
+
+    <form id="intakeForm" class="form-card" novalidate>
+      <div class="form-grid">
+        <!-- LEFT: inputs -->
+        <div>
+          <!-- service type -->
+          <div class="field">
+            <label class="lbl">Service type <span class="req">*</span></label>
+            <div class="seg">
+              <label><input type="radio" name="service" value="repair" checked><span>Repair</span></label>
+              <label><input type="radio" name="service" value="upgrade"><span>Upgrade</span></label>
+            </div>
+          </div>
+
+          <!-- REPAIR block -->
+          <fieldset id="repairBlock">
+            <legend>What needs work?</legend>
+            <div class="checks" id="repairChecks">
+              <!-- injected by JS from PACWEST_PRICING.repairItems -->
+            </div>
+          </fieldset>
+
+          <!-- UPGRADE block -->
+          <fieldset id="upgradeBlock" class="hidden">
+            <legend>Upgrade details</legend>
+            <div class="field">
+              <label class="lbl" for="upgradeDesc">Describe the item / what you want</label>
+              <textarea id="upgradeDesc" name="upgradeDesc" placeholder="e.g. big-bore kit, suspension revalve, exhaust..."></textarea>
+            </div>
+            <div class="field">
+              <label class="lbl">Part status</label>
+              <div class="seg">
+                <label><input type="radio" name="partStatus" value="in-hand" checked><span>I have the part</span></label>
+                <label><input type="radio" name="partStatus" value="order"><span>Order it for me</span></label>
+              </div>
+            </div>
+            <div class="field" style="margin-bottom:0">
+              <label class="lbl">Do you need advice?</label>
+              <div class="seg">
+                <label><input type="radio" name="advice" value="know" checked><span>I know what I want</span></label>
+                <label><input type="radio" name="advice" value="advice"><span>I need advice</span></label>
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- bike info -->
+          <fieldset>
+            <legend>Your bike</legend>
+            <div class="two">
+              <div class="field" style="margin-bottom:14px"><label class="lbl" for="make">Make</label><input type="text" id="make" name="make" placeholder="e.g. Honda"></div>
+              <div class="field" style="margin-bottom:14px"><label class="lbl" for="model">Model</label><input type="text" id="model" name="model" placeholder="e.g. CRF450R"></div>
+            </div>
+            <div class="two">
+              <div class="field" style="margin-bottom:0"><label class="lbl" for="year">Year</label><input type="number" id="year" name="year" placeholder="2024" min="1950" max="2030"></div>
+              <div class="field" style="margin-bottom:0">
+                <label class="lbl">Rider type</label>
+                <div class="seg">
+                  <label><input type="radio" name="rider" value="recreational" checked><span>Recreational</span></label>
+                  <label><input type="radio" name="rider" value="racer"><span>Racer</span></label>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- terms & opt-ins -->
+          <fieldset>
+            <legend>Terms &amp; options</legend>
+            <div class="terms-box">
+              <h4>Clean bike required</h4>
+              Bikes must arrive clean so we can inspect and work safely. Either bring it clean or add the cleaning option below.
+              <h4>Drop-off &amp; pickup</h4>
+              Drop off within 1 hour of your scheduled slot. Pick up within 24 hours of completion — late pickups are $25/day.
+              <h4>Cancellations</h4>
+              We hold your reserved spot for 1 hour to confirm. Cancellations cost $25.
+            </div>
+
+            <label class="chk" style="margin-bottom:10px"><input type="checkbox" id="cleanOpt" name="cleanOpt">
+              <span>Have PacWest clean my bike <small>(+$50). Leave unchecked — I'll bring it clean.</small></span></label>
+
+            <label class="chk" style="margin-bottom:10px"><input type="checkbox" id="keepParts" name="keepParts">
+              <span>Return my old parts to me <small>Leave unchecked — PacWest may keep/dispose of old parts.</small></span></label>
+
+            <label class="chk terms"><input type="checkbox" id="agree" name="agree" required>
+              <span>I agree to the terms above, including the clean-bike requirement, pickup window, and $25 cancellation fee. <span class="req">*</span></span></label>
+          </fieldset>
+
+          <!-- contact -->
+          <fieldset style="margin-bottom:0">
+            <legend>Your contact info</legend>
+            <div class="two">
+              <div class="field" style="margin-bottom:14px"><label class="lbl" for="name">Name <span class="req">*</span></label><input type="text" id="name" name="name" required></div>
+              <div class="field" style="margin-bottom:14px"><label class="lbl" for="email">Email <span class="req">*</span></label><input type="email" id="email" name="email" required></div>
+            </div>
+            <div class="two">
+              <div class="field" style="margin-bottom:14px"><label class="lbl" for="cell">Cell <span class="req">*</span></label><input type="tel" id="cell" name="cell" required></div>
+              <div class="field" style="margin-bottom:14px">
+                <label class="lbl" for="contactPref">Preferred contact</label>
+                <select id="contactPref" name="contactPref">
+                  <option value="text">Text</option>
+                  <option value="call">Call</option>
+                  <option value="email">Email</option>
+                  <option value="whatsapp">WhatsApp</option>
+                </select>
+              </div>
+            </div>
+            <div class="field" style="margin-bottom:0"><label class="lbl" for="notes">Anything else? <span class="hint">(optional)</span></label><textarea id="notes" name="notes" placeholder="Symptoms, deadlines, race dates..."></textarea></div>
+          </fieldset>
+        </div>
+
+        <!-- RIGHT: live estimate -->
+        <div>
+          <div class="estimate">
+            <div class="label">Ballpark estimate</div>
+            <div class="price" id="estPrice">$0</div>
+            <div class="range" id="estRange">Select a service to see your estimate</div>
+            <hr/>
+            <div class="row"><span>Est. completion</span><b id="estDate">—</b></div>
+            <div class="row"><span>Service</span><b id="estService">Repair</b></div>
+            <div class="row"><span>Rider</span><b id="estRider">Recreational</b></div>
+            <div class="note">This is a non-binding ballpark. Final quote confirmed after inspection. A $25 cancellation fee and reservation terms apply.</div>
+            <button type="submit" class="btn" id="submitBtn" style="width:100%; margin-top:18px">Reserve My Spot</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="formMsg"></div>
+    </form>
+  </div>
+</section>
+
+<!-- ============ CONTACT / FOOTER ============ -->
+<footer class="site" id="contact">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="brand"><svg class="bolt"><use href="#bolt"/></svg><span>PacWest Powersports</span></div>
+        <p class="tag" style="color:var(--steel-dim); letter-spacing:3px; font-size:.72rem">RACE · PROVEN · PODIUM</p>
+      </div>
+      <div>
+        <p><b style="color:var(--text)">Get in touch</b></p>
+        <p id="footPhone"></p>
+        <p id="footEmail"></p>
+        <p id="footAddr"></p>
+        <p id="footHours"></p>
+      </div>
+    </div>
+    <p class="legal">© <span id="year2"></span> PacWest Powersports. Estimates shown are non-binding ballparks; final pricing confirmed after inspection. Placeholder contact details — update in index.html config.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const C = window.PACWEST_CONFIG, P = window.PACWEST_PRICING;
+  const $ = (id) => document.getElementById(id);
+  const fmt = (n) => "$" + Math.round(n).toLocaleString();
+
+  /* ---- populate shop details ---- */
+  $("footPhone").textContent = C.SHOP_PHONE;
+  $("footEmail").innerHTML  = '<a href="mailto:'+C.SHOP_EMAIL+'">'+C.SHOP_EMAIL+'</a>';
+  $("footAddr").textContent  = C.SHOP_ADDRESS;
+  $("footHours").textContent = C.SHOP_HOURS;
+  $("year2").textContent = new Date().getFullYear();
+
+  /* ---- build repair checkboxes from pricing ---- */
+  const repairChecks = $("repairChecks");
+  Object.entries(P.repairItems).forEach(([key, it]) => {
+    const lab = document.createElement("label");
+    lab.className = "chk";
+    lab.innerHTML = '<input type="checkbox" name="repairItem" value="'+key+'"><span>'+it.label+'</span>';
+    repairChecks.appendChild(lab);
+  });
+
+  /* ---- helpers to read form ---- */
+  const radio = (name) => { const el = document.querySelector('input[name="'+name+'"]:checked'); return el ? el.value : null; };
+
+  function businessDaysFromNow(days){
+    const d = new Date();
+    let added = 0;
+    while (added < days){
+      d.setDate(d.getDate() + 1);
+      const dow = d.getDay();
+      if (dow !== 0 && dow !== 6) added++;   // skip Sun/Sat
+    }
+    return d;
+  }
+
+  /* ---- core estimate ---- */
+  function calc(){
+    const service = radio("service");
+    const rider = radio("rider");
+    let price = 0, days = 0, breakdown = [];
+
+    if (service === "repair"){
+      price += P.repairBase; days = 1;
+      document.querySelectorAll('input[name="repairItem"]:checked').forEach(cb => {
+        const it = P.repairItems[cb.value];
+        price += it.price;
+        days = Math.max(days, it.days) + 1; // overlap work, +1 buffer per item area
+        breakdown.push(it.label);
+      });
+    } else {
+      price += P.upgradeBase; days = 2;
+      if (radio("partStatus") === "order"){ price += P.upgradeOrderPartAdder; days += 3; }
+      if (radio("advice") === "advice"){ price += P.upgradeAdviceAdder; days += 1; }
+    }
+
+    // cleaning add-on
+    if ($("cleanOpt").checked) price += 50;
+
+    // racer priority/precision
+    if (rider === "racer") price *= P.racerMultiplier;
+
+    days = Math.max(days, P.minDays);
+
+    // update estimate panel
+    const hasSelection = service === "upgrade" ||
+      document.querySelectorAll('input[name="repairItem"]:checked').length > 0;
+
+    if (!hasSelection){
+      $("estPrice").textContent = "$0";
+      $("estRange").textContent = "Check what needs work to see your estimate";
+      $("estDate").textContent = "—";
+    } else {
+      $("estPrice").textContent = fmt(price);
+      const low = price * 0.85, high = price * 1.25;
+      $("estRange").textContent = "Likely range " + fmt(low) + " – " + fmt(high);
+      const d = businessDaysFromNow(days);
+      $("estDate").textContent = d.toLocaleDateString(undefined,{ month:"short", day:"numeric", year:"numeric" });
+    }
+    $("estService").textContent = service === "repair" ? "Repair" : "Upgrade";
+    $("estRider").textContent   = rider === "racer" ? "Racer" : "Recreational";
+
+    return { service, rider, price, days, breakdown,
+             estimateText: $("estPrice").textContent, dateText: $("estDate").textContent };
+  }
+
+  /* ---- toggle repair/upgrade blocks ---- */
+  function toggleBlocks(){
+    const s = radio("service");
+    $("repairBlock").classList.toggle("hidden", s !== "repair");
+    $("upgradeBlock").classList.toggle("hidden", s !== "upgrade");
+  }
+
+  /* ---- wire up live updates ---- */
+  document.getElementById("intakeForm").addEventListener("change", () => { toggleBlocks(); calc(); });
+  document.getElementById("intakeForm").addEventListener("input", calc);
+  toggleBlocks(); calc();
+
+  /* ---- submit ---- */
+  const form = $("intakeForm");
+  form.addEventListener("submit", async function(e){
+    e.preventDefault();
+    const msg = $("formMsg"); msg.className = ""; msg.textContent = "";
+
+    // basic validation
+    if (!$("agree").checked){ return showErr("Please agree to the terms to reserve your spot."); }
+    if (!$("name").value.trim() || !$("email").value.trim() || !$("cell").value.trim()){
+      return showErr("Please fill in your name, email, and cell number.");
+    }
+    const r = calc();
+
+    // assemble payload
+    const repairItems = Array.from(document.querySelectorAll('input[name="repairItem"]:checked')).map(c=>P.repairItems[c.value].label);
+    const payload = {
+      service: r.service,
+      repairItems: repairItems.join(", ") || "—",
+      upgradeDesc: $("upgradeDesc").value || "—",
+      partStatus: radio("partStatus") || "—",
+      adviceNeeded: radio("advice") || "—",
+      bike: [$("make").value, $("model").value, $("year").value].filter(Boolean).join(" ") || "—",
+      riderType: r.rider,
+      cleanByPacwest: $("cleanOpt").checked ? "Yes (+$50)" : "No - customer cleans",
+      returnOldParts: $("keepParts").checked ? "Return to customer" : "PacWest may dispose",
+      ballparkEstimate: r.estimateText,
+      estCompletion: r.dateText,
+      name: $("name").value,
+      email: $("email").value,
+      cell: $("cell").value,
+      preferredContact: $("contactPref").value,
+      notes: $("notes").value || "—"
+    };
+
+    const btn = $("submitBtn");
+    btn.disabled = true; btn.textContent = "Sending...";
+
+    try {
+      if (C.FORMSPREE_ID){
+        const res = await fetch("https://formspree.io/f/" + C.FORMSPREE_ID, {
+          method:"POST",
+          headers:{ "Accept":"application/json", "Content-Type":"application/json" },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) throw new Error("Form service error");
+        showOk(r);
+      } else {
+        // fallback: open a pre-filled email so the lead is never lost
+        const lines = Object.entries(payload).map(([k,v]) => k + ": " + v).join("\n");
+        const subject = encodeURIComponent("New intake reservation — " + payload.name);
+        const body = encodeURIComponent("New PacWest intake request:\n\n" + lines);
+        window.location.href = "mailto:" + C.SHOP_EMAIL + "?subject=" + subject + "&body=" + body;
+        showOk(r, true);
+      }
+    } catch (err){
+      showErr("Something went wrong sending your request. Please call us at " + C.SHOP_PHONE + ".");
+    } finally {
+      btn.disabled = false; btn.textContent = "Reserve My Spot";
+    }
+  });
+
+  function showOk(r, viaEmail){
+    const msg = $("formMsg");
+    msg.className = "msg ok";
+    msg.innerHTML = "<b>Spot requested!</b> Your ballpark is <b>"+r.estimateText+"</b>, estimated completion <b>"+r.dateText+
+      "</b>. We'll confirm within the hour." + (viaEmail ? " (Your email app opened — hit send to finish.)" : "");
+    msg.scrollIntoView({ behavior:"smooth", block:"center" });
+  }
+  function showErr(text){
+    const msg = $("formMsg");
+    msg.className = "msg err";
+    msg.textContent = text;
+    msg.scrollIntoView({ behavior:"smooth", block:"center" });
+  }
+})();
+</script>
+</body>
+</html>
